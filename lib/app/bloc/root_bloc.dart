@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:aeione_demo/model/ErrorModel.dart';
 import 'package:aeione_demo/model/LoginModel.dart';
 import 'package:aeione_demo/model/ResponseModel.dart';
 import 'package:aeione_demo/services/exception/app_exceptions.dart';
@@ -65,7 +66,13 @@ class RootBloc extends Bloc<RootEvent, RootState> {
             else {
               yield LoginState(responseModel: response);
             }
+          }else if(response is ErrorModel){
+            yield DialogHidden();
+            await Future.delayed(Duration(milliseconds: 100));
+            yield FailedAccountState(failedReason:response.message);
           }else{
+            yield DialogHidden();
+            await Future.delayed(Duration(milliseconds: 100));
             yield ErrorAccountState(failedReason: response);
           }
         }catch(e){

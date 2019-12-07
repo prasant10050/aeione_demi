@@ -70,35 +70,47 @@ class _LoginScreenState extends State<LoginScreen> {
           });
         }
         if (state is FailedAccountState) {
-          Scaffold.of(context).showSnackBar(
+          _scaffoldKey.currentState..showSnackBar(
             SnackBar(
               content: Title(
-                  color: Colors.red, child: Text("${state.failedReason}")),
+                  color: Colors.red, child: Text("${state.failedReason}",textAlign: TextAlign.center)),
               duration: Duration(seconds: 2),
             ),
           );
         }
         if (state is EmptyAccountState) {
-          Scaffold.of(context).showSnackBar(
+          _scaffoldKey.currentState..showSnackBar(
             SnackBar(
               content: Title(
-                  color: Colors.red, child: Text("${state.failedReason}")),
+                  color: Colors.red, child: Text("${state.failedReason}",textAlign: TextAlign.center)),
               duration: Duration(seconds: 2),
             ),
           );
         }
         if (state is ErrorAccountState) {
-          Scaffold.of(context).showSnackBar(
-            SnackBar(
-              content: Title(
-                  color: Colors.red, child: Text("${state.failedReason}")),
-              duration: Duration(seconds: 2),
-            ),
-          );
+          var message="";
+          if(state.failedReason.toString().contains("Communication")){
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                content: Title(
+                    color: Colors.red, child: Text("Slow or no internet connection.\nPlease check your internet settings and try again.",textAlign: TextAlign.center,),),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }else{
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                content: Title(
+                    color: Colors.red, child: Text("${state.failedReason}")),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
         }
       },
       child: Scaffold(
         appBar: topAppBar,
+        key: _scaffoldKey,
         resizeToAvoidBottomPadding: false,
         backgroundColor:Color(0xffEEF0EB),
         body: _buildBody(context),
@@ -158,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           validator: (input) => isValidPassword(input)
                               ? null
-                              : "Username must not be empty.",
+                              : "Username shouldn\'t not be empty.",
                         ),
                         TextFormField(
                           controller: passwordTextEditingController,
@@ -199,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           validator: (input) => isValidPassword(input)
                               ? null
-                              : "Password length must not be empty.",
+                              : "Password shouldn\'t not be empty.",
                         ),
                         RaisedButton(
                           child: Text("Login"),

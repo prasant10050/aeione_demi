@@ -1,4 +1,5 @@
 import 'package:aeione_demo/constants/service_constants.dart';
+import 'package:aeione_demo/model/ErrorModel.dart';
 import 'package:aeione_demo/model/ResponseModel.dart';
 import 'package:aeione_demo/services/data_connection_checker.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +32,16 @@ class AppRepo extends Repository{
             LogInterceptor(requestBody: true, request: true, responseBody: true));
         response = await dio.postUri(uri, data: bodyEncoded,);
         var responseJson=_returnResponse(response);
+        print("responseJson ${responseJson.toString()}");
         if(responseJson is AppException){
           return responseJson;
         }else{
-          return ResponseModel.fromJson(responseJson);
+          if(responseJson['status']=="error"){
+            return ErrorModel.fromJson(responseJson);
+          }
+          else {
+            return ResponseModel.fromJson(responseJson);
+          }
         }
       }
       if(status==DataConnectionStatus.disconnected){
@@ -48,7 +55,6 @@ class AppRepo extends Repository{
 dynamic _returnResponse(Response response) {
   switch (response.statusCode) {
     case SUCCESS:
-      print(response.data);
       return response.data;
     case BAD_REQUEST:
       throw BadRequestException(response.data.toString());
